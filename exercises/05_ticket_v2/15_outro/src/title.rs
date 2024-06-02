@@ -2,7 +2,40 @@
 //   enforcing that the title is not empty and is not longer than 50 characters.
 //   Implement the traits required to make the tests pass too.
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct TicketTitle(String);
+
+#[derive(Debug, thiserror::Error)]
+pub enum ParseTitleError {
+    #[error("The title cannot be empty")]
+    Empty,
+    #[error("The title cannot be longer than 50 characters")]
+    ToLong,
+}
+
+impl TryFrom<String> for TicketTitle {
+    type Error = ParseTitleError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        value.as_str().try_into()
+    }
+}
+
+impl TryFrom<&str> for TicketTitle {
+    type Error = ParseTitleError;
+
+    fn try_from(value: &str) -> Result<TicketTitle, Self::Error> {
+        if value.is_empty() {
+            Err(ParseTitleError::Empty)
+        }
+        else if value.len() > 50 {
+            Err(ParseTitleError::ToLong)
+        }
+        else {
+            Ok(TicketTitle(value.to_string()))
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
