@@ -11,6 +11,26 @@ pub struct TicketStore {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TicketId(u64);
 
+
+impl std::ops::Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, idx: &TicketId) -> &Self::Output {
+        // Why the heck does the first line need a & when
+        // its the same return type???
+        // &self[*idx]
+        self.get(*idx).unwrap()
+    }
+}
+
+impl std::ops::Index<TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, idx: TicketId) -> &Self::Output {
+        self.get(idx).unwrap()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
     pub id: TicketId,
